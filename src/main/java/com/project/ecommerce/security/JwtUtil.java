@@ -1,51 +1,55 @@
 package com.project.ecommerce.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    private String secretKey = "DkT5Qm7xZwX9c2YpR8sN3gV4yC6fH9bJmK8pX2ZrT7YqU5dV\n"; // Change this to a stronger key!
 
-    // Generate Token
-    public String generateToken(String email) {
+    private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 256-bit secure key
+    private final long expirationTime = 1000 * 60 * 60; // 1 hour
+
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour expiry
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(secretKey)
                 .compact();
     }
 
-    // Validate Token
-    public boolean validateToken(String token, String email) {
-        return (extractEmail(token).equals(email) && !isTokenExpired(token));
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
-    // Extract Email from Token
-    public String extractEmail(String token) {
-        return getClaims(token).getSubject();
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
-    // Extract Expiry Date
-    public Date extractExpiration(String token) {
-        return getClaims(token).getExpiration();
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    // Check if Token Expired
+    public boolean isTokenValid(String token, String username) {
+        final String extractedUsername = extractUsername(token);
+        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Get Token Claims
-    private Claims getClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 }
