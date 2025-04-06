@@ -10,6 +10,7 @@ import java.util.List;
 @Service
 public class ProductService {
 
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -33,4 +34,11 @@ public class ProductService {
 
         return productRepository.save(existingProduct);
     }
+
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        productRepository.delete(product);
+    }
+
 }

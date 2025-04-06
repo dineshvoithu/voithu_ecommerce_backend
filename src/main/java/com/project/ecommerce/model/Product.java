@@ -8,6 +8,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Product {
 
     @Id
@@ -20,4 +21,8 @@ public class Product {
 
     // This will store the URL or path to the product image
     private String imageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")  // This will be a foreign key to 'users' table
+    private User createdBy;
 }
