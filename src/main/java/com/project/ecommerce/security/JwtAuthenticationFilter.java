@@ -30,17 +30,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // ✅ Skip token validation for login and register endpoints
+        String path = request.getRequestURI();
+        if (path.contains("/api/users/login") || path.contains("/api/users/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         String jwt = null;
         String username = null;
 
-        // 🧠 Extract JWT from "Bearer <token>"
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
         }
 
-        // ✅ Authenticate user if token is valid and no existing authentication
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -49,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

@@ -1,4 +1,5 @@
 package com.project.ecommerce.security;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import com.project.ecommerce.security.JwtAuthenticationFilter;
 import com.project.ecommerce.service.CustomUserDetailsService;
@@ -15,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 
@@ -50,7 +51,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // You can change this or use plain for testing
+        return new BCryptPasswordEncoder(); // For security
     }
 
     @Bean
