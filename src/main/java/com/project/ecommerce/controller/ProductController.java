@@ -5,6 +5,7 @@ import com.project.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,34 +22,38 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-
-    // 🔹 Add a product (For Seller/Admin)
-    @PostMapping
-    @PreAuthorize("hasRole('SELLER')") // ✅ Restriction added here
-    public Product addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    // 🔹 Add a product with image (For Seller)
+    @PostMapping("/add")
+    @PreAuthorize("hasRole('SELLER')")
+    public Product addProductWithImage(
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("price") double price,
+            @RequestParam("category") String category,
+            @RequestParam("image") MultipartFile imageFile
+    ) {
+        return productService.addProductWithImage(name, description, price, category, imageFile);
     }
 
+    // 🔹 Update product
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SELLER')")
+    @PreAuthorize("hasRole('SELLER')")
     public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
         return productService.updateProduct(id, updatedProduct);
     }
 
+    // 🔹 Delete product
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SELLER')") // ✅ Only SELLER can delete
+    @PreAuthorize("hasRole('SELLER')")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "Product deleted successfully";
     }
 
+    // 🔹 View seller’s own products
     @GetMapping("/seller")
     @PreAuthorize("hasRole('SELLER')")
     public List<Product> getSellerProducts() {
         return productService.getProductsBySeller();
     }
-
-
-
-
 }

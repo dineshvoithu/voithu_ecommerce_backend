@@ -8,7 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -25,22 +30,48 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    // 🔹 Add product (for Seller)
-    public Product addProduct(Product product) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email;
+    // 🔹 Add product with image (for Seller)
+    public Product addProductWithImage(String name, String description, double price, String category, MultipartFile imageFile) {
+        try {
+            // 1⃣ Get current authenticated user (Seller)
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String email;
 
-        if (principal instanceof UserDetails) {
-            email = ((UserDetails) principal).getUsername();
-        } else {
-            email = principal.toString();
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            } else {
+                email = principal.toString();
+            }
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 2⃣ Define upload directory (relative to project folder)
+            String uploadDir = System.getProperty("user.dir") + "/uploads";
+            File uploadPath = new File(uploadDir);
+            if (!uploadPath.exists()) {
+                uploadPath.mkdirs(); // ✅ Create the folder if it doesn't exist
+            }
+
+            // 3⃣ Save the image file
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.write(filePath, imageFile.getBytes());
+
+            // 4⃣ Create and save the product
+            Product product = new Product();
+            product.setName(name);
+            product.setDescription(description);
+            product.setPrice(price);
+            product.setCategory(category);
+            product.setImageUrl("/uploads/" + fileName); // Optional: path for frontend access
+            product.setCreatedBy(user);
+
+            return productRepository.save(product);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save image", e);
         }
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        product.setCreatedBy(user);
-        return productRepository.save(product);
     }
 
     // 🔹 Update product (for Seller)
