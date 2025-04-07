@@ -21,6 +21,7 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+
     // 🔹 Add a product (For Seller/Admin)
     @PostMapping
     @PreAuthorize("hasRole('SELLER')") // ✅ Restriction added here
@@ -40,6 +41,13 @@ public class ProductController {
         productService.deleteProduct(id);
         return "Product deleted successfully";
     }
+
+    @GetMapping("/seller")
+    @PreAuthorize("hasRole('SELLER')")
+    public List<Product> getSellerProducts() {
+        return productService.getProductsBySeller();
+    }
+
 
 
 
