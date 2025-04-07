@@ -22,13 +22,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        // ✅ Convert user's role to Spring Security authority (prefix with "ROLE_")
-        String role = "ROLE_" + user.getRole().toUpperCase(); // e.g., ROLE_SELLER
+        String role = user.getRole();
+        System.out.println("🔍 Raw Role from DB: " + role);
+
+        String springRole = "ROLE_" + role.toUpperCase();
+        System.out.println("✅ Spring Security Role: " + springRole);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                List.of(new SimpleGrantedAuthority(role))
+                List.of(new SimpleGrantedAuthority(springRole))
         );
     }
 }

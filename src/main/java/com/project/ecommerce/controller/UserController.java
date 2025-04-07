@@ -4,11 +4,14 @@ import com.project.ecommerce.model.User;
 import com.project.ecommerce.repository.UserRepository;
 import com.project.ecommerce.security.JwtUtil;
 import com.project.ecommerce.service.CustomUserDetailsService;
+import com.project.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -27,10 +30,12 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserService userService;
+
     // ✅ Register User (with encoded password)
     @PostMapping("/register")
     public String registerUser(@RequestBody User user) {
-        // Encode password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return "User registered successfully!";
@@ -44,9 +49,10 @@ public class UserController {
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
 
-            // Check password using encoder
             if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+                System.out.println("🔐 Logged in as: " + user.getEmail());
+                System.out.println("🔐 Role: " + existingUser.getRole());
                 return jwtUtil.generateToken(userDetails);
             }
         }
@@ -54,11 +60,44 @@ public class UserController {
         return "Invalid email or password!";
     }
 
-    // ✅ Protected API using token
+    // ✅ View logged-in user's profile (using JWT token)
     @GetMapping("/profile")
     public String getUserProfile(@RequestHeader("Authorization") String token) {
         token = token.replace("Bearer ", "");
         String email = jwtUtil.extractUsername(token);
         return "Hello, your email is: " + email;
     }
+
+    // ✅ ADMIN: Get all users
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<User> getAllUsers() {
+        System.out.println("✅ Inside getAllUsers() method");
+        return userService.getAllUsers();
+    }
+
+    // ✅ ADMIN: Test if token has admin access
+    @GetMapping("/admin-test")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String testAdminAccess() {
+        System.out.println("✅ ADMIN access confirmed!");
+        return "Welcome, Admin!";
+    }
+
+    // ✅ ADMIN: Get user by ID
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    // ✅ ADMIN: Delete user by ID
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return "User deleted successfully";
+    }
+
+
 }
