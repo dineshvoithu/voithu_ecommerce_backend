@@ -33,12 +33,22 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ✅ Register User (with encoded password)
-    @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
+    // ✅ Register as Customer
+    @PostMapping("/register/customer")
+    public String registerCustomer(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("ROLE_CUSTOMER"); // Set role
         userRepository.save(user);
-        return "User registered successfully!";
+        return "Customer registered successfully!";
+    }
+
+    // ✅ Register as Seller
+    @PostMapping("/register/seller")
+    public String registerSeller(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("SELLER"); // Set role
+        userRepository.save(user);
+        return "Seller registered successfully!";
     }
 
     // ✅ Login (generate token)
@@ -98,6 +108,4 @@ public class UserController {
         userService.deleteUser(id);
         return "User deleted successfully";
     }
-
-
 }

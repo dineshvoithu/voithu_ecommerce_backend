@@ -51,6 +51,7 @@ public class ProductController {
     }
 
     // 🔹 View seller’s own products
+
     @GetMapping("/seller")
     @PreAuthorize("hasRole('SELLER')")
     public List<Product> getSellerProducts() {
