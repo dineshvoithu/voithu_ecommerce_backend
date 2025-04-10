@@ -6,14 +6,16 @@ import com.project.ecommerce.security.JwtUtil;
 import com.project.ecommerce.service.CustomUserDetailsService;
 import com.project.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -51,9 +53,9 @@ public class UserController {
         return "Seller registered successfully!";
     }
 
-    // ✅ Login (generate token)
+    // ✅ Login (generate token and return role)
     @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
         Optional<User> existingUserOpt = userRepository.findByEmail(user.getEmail());
 
         if (existingUserOpt.isPresent()) {
@@ -61,14 +63,21 @@ public class UserController {
 
             if (passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+                String token = jwtUtil.generateToken(userDetails);
+
                 System.out.println("🔐 Logged in as: " + user.getEmail());
                 System.out.println("🔐 Role: " + existingUser.getRole());
-                return jwtUtil.generateToken(userDetails);
+
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                response.put("role", existingUser.getRole()); // Return actual role
+                return ResponseEntity.ok(response);
             }
         }
 
-        return "Invalid email or password!";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password!");
     }
+
 
     // ✅ View logged-in user's profile (using JWT token)
     @GetMapping("/profile")
