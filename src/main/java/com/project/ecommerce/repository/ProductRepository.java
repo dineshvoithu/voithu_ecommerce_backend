@@ -11,5 +11,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 🔹 Get all products added by a specific seller
     List<Product> findByCreatedBy(User user);
     List<Product> findByCategoryIgnoreCase(String category);
+    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+            String name, String description, String category);
+
 
 }

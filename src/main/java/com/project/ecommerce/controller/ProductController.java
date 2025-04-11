@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
@@ -16,10 +16,24 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // 🔹 Search products by query (put this BEFORE getProductById)
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String query) {
+        List<Product> products = productService.searchProducts(query);
+        return ResponseEntity.ok(products);
+    }
+
     // 🔹 Get all products (For Customers)
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    // 🔹 Get products by category (e.g., Mobiles, Tablets)
+    @GetMapping("/category/{category}")
+    public List<Product> getProductsByCategory(@PathVariable String category) {
+        System.out.println("Fetching products for category: " + category);
+        return productService.getProductsByCategory(category);
     }
 
     // 🔹 Get product by ID (for product details page)
@@ -27,13 +41,6 @@ public class ProductController {
     public Product getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
-
-    // 🔹 Get products by category (e.g., Mobiles, Tablets)
-    @GetMapping("/category/{category}")
-    public List<Product> getProductsByCategory(@PathVariable String category) {
-        return productService.getProductsByCategory(category);
-    }
-
 
     // 🔹 Add a product with image (For Seller)
     @PostMapping("/add")
@@ -64,7 +71,6 @@ public class ProductController {
     }
 
     // 🔹 View seller’s own products
-
     @GetMapping("/seller")
     @PreAuthorize("hasRole('SELLER')")
     public List<Product> getSellerProducts() {

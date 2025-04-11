@@ -41,6 +41,11 @@ public class ProductService {
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategoryIgnoreCase(category);
     }
+    public List<Product> searchProducts(String query) {
+        return productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+                query, query, query);
+
+    }
 
     // 🔹 Add product with image (for Seller)
     public Product addProductWithImage(String name, String description, double price, String category, MultipartFile imageFile) {
@@ -94,6 +99,7 @@ public class ProductService {
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setCategory(updatedProduct.getCategory());
         existingProduct.setImageUrl(updatedProduct.getImageUrl());
 
         return productRepository.save(existingProduct);
