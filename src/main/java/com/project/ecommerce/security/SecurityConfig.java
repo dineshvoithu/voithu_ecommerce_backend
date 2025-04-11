@@ -35,14 +35,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Enable CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/users/register/**",
                                 "/api/users/login",
                                 "/api/users/register/seller",
-                                "/uploads/**"
+                                "/uploads/**",
+                                "/products/all" // ✅ Make products public for now
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -71,7 +72,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // ✅ CORS Configuration for allowing React frontend (http://localhost:5173)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

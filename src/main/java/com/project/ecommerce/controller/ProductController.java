@@ -22,6 +22,19 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    // 🔹 Get product by ID (for product details page)
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable Long id) {
+        return productService.getProductById(id);
+    }
+
+    // 🔹 Get products by category (e.g., Mobiles, Tablets)
+    @GetMapping("/category/{category}")
+    public List<Product> getProductsByCategory(@PathVariable String category) {
+        return productService.getProductsByCategory(category);
+    }
+
+
     // 🔹 Add a product with image (For Seller)
     @PostMapping("/add")
     @PreAuthorize("hasRole('SELLER')")

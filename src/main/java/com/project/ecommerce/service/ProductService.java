@@ -16,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+
+
 @Service
 public class ProductService {
 
@@ -28,6 +30,16 @@ public class ProductService {
     // 🔹 View all products (for Customers)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+    // 🔹 Get product by ID
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    // 🔹 Get products by category
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategoryIgnoreCase(category);
     }
 
     // 🔹 Add product with image (for Seller)
