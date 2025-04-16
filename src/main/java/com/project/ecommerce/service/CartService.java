@@ -24,6 +24,14 @@ public class CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // 🔹 Check if product already exists in user's cart
+        CartItem existingItem = cartItemRepository.findByUserAndProduct(user, product);
+
+        if (existingItem != null) {
+            // Product already in cart — just update quantity
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+            return cartItemRepository.save(existingItem);
+        }
         // 🔹 Create new CartItem
         CartItem cartItem = new CartItem();
         cartItem.setProduct(product);

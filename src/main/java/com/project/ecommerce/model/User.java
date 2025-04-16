@@ -21,5 +21,10 @@ public class User {
 
     private String password;
 
+    @Column(unique = true)
+
+    private String phone_number;
+    private String address;
+
     private String role; // CUSTOMER, SELLER, ADMIN
 }

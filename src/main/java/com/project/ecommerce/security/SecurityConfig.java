@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 "/api/users/login",
                                 "/api/users/register/seller",
                                 "/uploads/**",
-                                "/products/all" // ✅ Make products public for now
+                                "/products/all" //✅ Make products public for now
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
