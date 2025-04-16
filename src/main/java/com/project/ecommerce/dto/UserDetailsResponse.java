@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserDetailsResponse {
-    private String fullName;
-    private String phone;
+    private String name;  // Maps to "fullName" in frontend
+    private String phone_number;  // Maps to "phone" in frontend
     private String address;
     private String email;
 }
