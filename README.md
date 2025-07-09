@@ -202,5 +202,5 @@ src/
 
 **Dinesh**  
 📧 Email: dineshvoithu@gmail.com  
-🔗 LinkedIn: [linkedin.com/in/dineshvoithu]  
+🔗 LinkedIn: [linkedin.com/in/dineshvoithu](https://linkedin.com/in/dineshvoithu) 
 🌐 GitHub: [github.com/dineshvoithu](https://github.com/dineshvoithu)
