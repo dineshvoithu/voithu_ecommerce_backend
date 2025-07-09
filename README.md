@@ -192,7 +192,7 @@ src/
 
 - 🎓 MCA Final Year Project  
 - 🔧 Tech Stack: React (Frontend), Spring Boot (Backend), MySQL (DB)  
-- 🧠 Developed by: Dinesh  
+- 🧠 Developed by: Dinesh Voithu 
 - 🔐 Auth: JWT & Role-Based Access  
 - 📅 Year: 2025
 
@@ -200,7 +200,7 @@ src/
 
 ## 📫 Contact
 
-**Dinesh**  
+**Dinesh Voithu**  
 📧 Email: dineshvoithu@gmail.com  
 🔗 LinkedIn: [linkedin.com/in/dineshvoithu](https://linkedin.com/in/dineshvoithu) 
 🌐 GitHub: [github.com/dineshvoithu](https://github.com/dineshvoithu)
