@@ -30,12 +30,3 @@ This is the **backend** for our full-stack e-commerce web application. It is bui
    git clone https://github.com/your-username/backend-repo.git
    cd backend-repo
 
-src/
-├── config/          # Security config (JWT, filters, etc.)
-├── controller/      # API controllers
-├── dto/             # Request/response DTOs
-├── model/           # Entity classes
-├── repository/      # JPA repositories
-├── service/         # Business logic
-└── EcommerceApplication.java
-
