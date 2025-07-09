@@ -1,107 +1,206 @@
-# ⚙️ Voithu E-Commerce Backend (Spring Boot)
+# ⚙️ E-Commerce Backend (Spring Boot + JWT + MySQL)
 
-This is the **backend** for our full-stack e-commerce web application. It is built using **Spring Boot** and secured with **JWT authentication**. The backend provides RESTful APIs for handling user roles, product management, cart operations, and orders.
+This is the **backend** for a full-stack e-commerce web application developed as an MCA final-year project. It is built using **Spring Boot**, secured with **JWT**, and connects to a **MySQL** database. The backend provides RESTful APIs for user authentication, product management, cart functionality, and order processing.
+
+---
 
 ## 💻 Technologies Used
 
-- Java  
+- Java 17  
 - Spring Boot  
 - Spring Security (JWT)  
 - Hibernate / JPA  
 - MySQL  
 - Maven  
 
-## 🔑 Features
+---
 
-- JWT-based authentication and authorization  
-- Role-based access (Customer, Seller, Admin)  
-- Product management APIs  
-- Cart and order management  
-- Admin can manage all users and orders  
-- Seller can manage their own products only  
-- Encrypted passwords with BCrypt  
-- Layered architecture (Controller → Service → Repository)
+## ✅ Key Features
 
-## 🔧 Getting Started
+- 🔐 JWT-based Login/Register (Customer & Seller)
+- 👤 Role-based Access (Customer, Seller, Admin)
+- 🛍️ Product Management (Add, Edit, Delete by Seller)
+- 🛒 Cart Operations (Add, View, Remove items)
+- 📦 Order Placement and Order History (Customer)
+- 🧑‍💼 Admin Panel: Manage Users and Orders
+- BCrypt password hashing
+- RESTful API structure following MVC design
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Java 17+  
+- Maven  
+- MySQL 8.x  
+- IDE (IntelliJ / Eclipse / VS Code)
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/backend-repo.git
-cd backend-repo
+git clone https://github.com/your-username/ecommerce-backend.git
+cd ecommerce-backend
 ```
 
 ### 2. Configure MySQL Database
 
-Update `src/main/resources/application.properties`:
+```sql
+CREATE DATABASE ecommerce_db;
+```
+
+In `src/main/resources/application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/ecommerce_db
-spring.datasource.username=your_mysql_username
+spring.datasource.username=root
 spring.datasource.password=your_mysql_password
+
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
 ```
 
 ### 3. Run the Application
 
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
-Or use IntelliJ/Eclipse to run the main class: `EcommerceApplication.java`
+Backend server: `http://localhost:8080`  
+Swagger (if enabled): `http://localhost:8080/swagger-ui/`
 
-## 📁 Project Structure
+---
+
+## 🗃️ Database Schema
+
+### users
+
+```sql
+CREATE TABLE users (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  password VARCHAR(255),
+  role ENUM('CUSTOMER', 'SELLER', 'ADMIN'),
+  address TEXT,
+  phone VARCHAR(20)
+);
+```
+
+### products
+
+```sql
+CREATE TABLE products (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  description TEXT,
+  price DOUBLE,
+  image_url VARCHAR(255),
+  category VARCHAR(50),
+  seller_id BIGINT,
+  FOREIGN KEY (seller_id) REFERENCES users(id)
+);
+```
+
+### cart_items
+
+```sql
+CREATE TABLE cart_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  product_id BIGINT,
+  quantity INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+```
+
+### orders
+
+```sql
+CREATE TABLE orders (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT,
+  total_price DOUBLE,
+  payment_method VARCHAR(50),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+### order_items
+
+```sql
+CREATE TABLE order_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT,
+  product_id BIGINT,
+  quantity INT,
+  price DOUBLE,
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+```
+
+---
+
+## 🔐 Authentication & Roles
+
+- JWT Token-based authentication  
+- Passwords hashed with BCrypt  
+- Roles:  
+  - CUSTOMER: Browse and order products  
+  - SELLER: Manage own products  
+  - ADMIN: Full control over users and orders  
+
+---
+
+## 🧪 Sample API Endpoints
+
+| Method | Endpoint                 | Description                        |
+|--------|--------------------------|------------------------------------|
+| POST   | `/api/auth/register`     | User registration                  |
+| POST   | `/api/auth/login`        | Login and get JWT token            |
+| GET    | `/api/products`          | View all products                  |
+| POST   | `/api/seller/products`   | Add new product (Seller only)      |
+| GET    | `/api/cart`              | View cart items                    |
+| POST   | `/api/cart/add`          | Add item to cart                   |
+| POST   | `/api/orders`            | Place order                        |
+| GET    | `/api/orders`            | View order history                 |
+
+---
+
+## 📁 Folder Structure
 
 ```
 src/
-├── config/          # Security configuration (JWT, filters)
-├── controller/      # API Controllers
-├── dto/             # Request/response DTOs
-├── model/           # Entity classes
-├── repository/      # JPA Repositories
-├── service/         # Business logic
-└── EcommerceApplication.java
+├── config/                # JWT Security Config
+├── controller/            # REST API Controllers
+├── dto/                   # Request/Response DTOs
+├── entity/                # JPA Entities
+├── repository/            # Spring Data Repositories
+├── service/               # Business Logic
+└── resources/
+    └── application.properties
 ```
 
-## 📂 API Endpoints Overview
+---
 
-| Method | Endpoint                | Description                        |
-|--------|-------------------------|------------------------------------|
-| POST   | /api/auth/register      | Register new user                  |
-| POST   | /api/auth/login         | Login and get JWT token            |
-| GET    | /api/products           | View all products                  |
-| GET    | /api/products/{id}      | View product by ID                 |
-| POST   | /api/products           | Add new product (Seller only)      |
-| PUT    | /api/products/{id}      | Update product                     |
-| DELETE | /api/products/{id}      | Delete product                     |
-| POST   | /api/cart               | Add to cart                        |
-| GET    | /api/cart               | View cart                          |
-| DELETE | /api/cart/{itemId}      | Remove item from cart              |
-| POST   | /api/orders             | Place order                        |
-| GET    | /api/orders             | View order history                 |
-| GET    | /api/admin/users        | Admin: View all users              |
-| DELETE | /api/admin/users/{id}   | Admin: Delete user                 |
-| GET    | /api/admin/orders       | Admin: View all orders             |
+## 📌 Project Info
 
-## 🔒 Roles
+- 🎓 MCA Final Year Project  
+- 🔧 Tech Stack: React (Frontend), Spring Boot (Backend), MySQL (DB)  
+- 🧠 Developed by: Dinesh  
+- 🔐 Auth: JWT & Role-Based Access  
+- 📅 Year: 2025
 
-- **CUSTOMER** – Browse, add to cart, place orders  
-- **SELLER** – Add/Edit/Delete own products  
-- **ADMIN** – Full access to users and orders
+---
 
-## ✅ Notes
+## 📫 Contact
 
-- Backend runs on: `http://localhost:8080`
-- Use Postman or Swagger for testing
-- JWT token must be passed in the `Authorization` header:
-  ```
-  Authorization: Bearer <your_token_here>
-  ```
-
-## 📌 Future Improvements
-
-- Swagger API documentation  
-- Payment Gateway integration  
-- Email confirmation & reset password  
-- Deployment to cloud (Render / AWS)
-
+**Dinesh**  
+📧 Email: your_email@example.com  
+🔗 LinkedIn: [linkedin.com/in/yourprofile]  
+🌐 GitHub: [github.com/your-username](https://github.com/your-username)
