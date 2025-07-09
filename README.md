@@ -201,6 +201,6 @@ src/
 ## 📫 Contact
 
 **Dinesh**  
-📧 Email: your_email@example.com  
-🔗 LinkedIn: [linkedin.com/in/yourprofile]  
-🌐 GitHub: [github.com/your-username](https://github.com/your-username)
+📧 Email: dineshvoithu@gmail.com  
+🔗 LinkedIn: [linkedin.com/in/dineshvoithu]  
+🌐 GitHub: [github.com/dineshvoithu](https://github.com/dineshvoithu)
