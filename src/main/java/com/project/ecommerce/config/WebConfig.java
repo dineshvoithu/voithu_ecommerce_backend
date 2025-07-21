@@ -1,4 +1,3 @@
-// We’ll create a configuration class that tells Spring Boot to serve files from your uploads/ directory like a public folder. || When the frontend displays a product, it should also show the product image (using the saved imageUrl).
 package com.project.ecommerce.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +19,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + uploadPath + "/");
     }
 
-    // 🔹 Enable CORS globally for frontend at http://localhost:5173
+    // 🔹 Enable CORS for frontend (local + deployed Vercel frontend)
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Apply to all endpoints
-                .allowedOrigins("http://localhost:5173", "https://voithucart.vercel.app") // Your React app
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "https://voithucart.vercel.app"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true); // For cookies or JWT
+                .allowCredentials(false); // false if not using cookies
     }
 }
