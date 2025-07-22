@@ -1,0 +1,47 @@
+[33m7654625[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m cloud config
+[33m5cd0dbc[m clound sec step
+[33m0962b22[m clound sec step
+[33mc3baeac[m clound sec step
+[33m5927c89[m clound sec step
+[33mf1cbddd[m clound sec step
+[33mc9d97ca[m clound sec step
+[33m26b2502[m clound first step
+[33mbff59c9[m cors true
+[33mc47790e[m Fix error
+[33m726500c[m Fix CORS for Vercel frontend and enable static image serving
+[33m08e6046[m Fix CORS for Vercel frontend and enable static image serving
+[33m256533c[m Initial deploy-ready backend cors changes
+[33m5ab2822[m Initial deploy-ready backend
+[33m420aef4[m sql path setup
+[33m7a71a1b[m Update README.md
+[33m7f91701[m Update README.md
+[33md86eb1f[m Update README.md
+[33m235a263[m Update README.md
+[33m026a43f[m Update README.md
+[33mf178858[m Update README.md
+[33mbde9817[m Update README.md
+[33m10552f4[m Update README.md
+[33m76852e7[m Update README.md
+[33m1b41129[m userdetailsresponse field updated
+[33mad9b3d5[m profile page created
+[33m39480bf[m CartItem Added demo
+[33m9528653[m CartItem Added
+[33ma33f23f[m Added fetch products
+[33m37e6120[m Added product fetch bt id and category for customers
+[33m791fca7[m cors enabled
+[33mdd108bc[m security config added seller api
+[33m88c83aa[m usercontroller and securityconfig for frontend
+[33m9a7b52d[m uploads/ folder as a static resource (public URL)
+[33m63f2858[m Seller: Add Product with Image Support
+[33m26222e6[m Admin CRUD Done
+[33me2b2807[m Seller sees only their added products
+[33mde3a451[m start from only seller can see their own products
+[33m198ce82[m Added Products, Roles Provided, Seller Add and Update Products
+[33m2ca65b2[m JWT get api working code updated
+[33m7d43051[m Test controller added
+[33m437f1bd[m Added JWT Token Generated
+[33mee07280[m user login API added in UserController.java
+[33m5315834[m security config file updated, no 401 error and added user controller
+[33m7415139[m user and userrepo commit
+[33m4f82c3d[m first commit
+[33me7a7763[m first commit
